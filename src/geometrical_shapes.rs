@@ -104,7 +104,7 @@ impl Triangle {
 impl Drawable for Triangle {
     fn draw(&self, image: &mut Image) {
         // get a random color
-        let color: Color = Color::rgb(255, 255, 255);
+        let color: Color = Self::color();
 
         let point_a = &self.0;
         let point_b = &self.1;
@@ -129,7 +129,7 @@ impl Rectangle {
 impl Drawable for Rectangle {
     fn draw(&self, image: &mut Image) {
         // get a random color
-        let color: Color = Color::rgb(255, 255, 255);
+        let color: Color = Self::color();
 
         let point_a = &Point(self.1.0, self.1.0);
         let point_b = &Point(self.0.1, self.1.1);
@@ -175,14 +175,11 @@ impl Drawable for Circle {
 
         let mut x: i32 = 0;
         let mut y: i32 = -raduis;
-        let mut p: i32 = -raduis;
 
         while x < (-y) {
-            if p > 0 {
+            let y_mid = y as f64 + 0.5;
+            if (x.pow(2)) as f64 + y_mid.powf(2.0) > (raduis * raduis) as f64 {
                 y += 1;
-                p += 2 * (x + y) + 1;
-            } else {
-                p += 2 * x + 1;
             }
 
             image.display(center_x + x, center_y + y, color.clone());
