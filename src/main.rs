@@ -5,7 +5,7 @@ use gs::{Displayable, Drawable};
 use raster::{Color, Image};
 
 fn main() {
-    let mut image = Image::blank(100, 100);
+    let mut image = Image::blank(1000, 1000);
 
     // gs::Line::random(image.width, image.height).draw(&mut image);
 
@@ -21,9 +21,9 @@ fn main() {
     // );
     // triangle.draw(&mut image);
 
-    // for _ in 1..50 {
-    //     gs::Circle::random(image.width, image.height).draw(&mut image);
-    // }
+    for _ in 1..50 {
+        gs::Circle::random(image.width, image.height).draw(&mut image);
+    }
 
     raster::save(&image, "image.png").unwrap();
 }

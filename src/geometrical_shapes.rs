@@ -62,7 +62,6 @@ impl Drawable for Line {
         let point_1 = &self.0;
         let point_2 = &self.0;
 
-
         // let _ = image.set_pixel(point_1, self.1, Self::color());
     }
 }
@@ -102,5 +101,49 @@ impl Rectangle {
     }
     pub fn random(x: i32, y: i32) -> i32 {
         rand::rng().random_range(x..y)
+    }
+}
+
+// circle struct
+#[derive(Debug, Clone)]
+pub struct Circle(Point, i32);
+
+impl Circle {
+    pub fn new(c: &Point, r: i32) -> Self {
+        Self(c.clone(), r)
+    }
+    pub fn random(width: i32, height: i32) -> Self {
+        let x = rand::rng().random_range(0..width);
+        let y = rand::rng().random_range(0..height);
+        let r = rand::rng().random_range(0..height);
+        Self(Point(x, y), r)
+    }
+}
+
+impl Drawable for Circle {
+    fn draw(&mut self, image: &mut Image) {
+        let color = Self::color();
+        let center_x = self.0.0;
+        let center_y = self.0.1;
+        let mut x = 0;
+        let mut y = -self.1; //negative raduis
+        let mut p = -self.1;
+        while x < (-y) {
+            if p > 0 {
+                y += 1;
+                p += 2 * (x + y) + 1;
+            } else {
+                p += 2 * x + 1;
+            }
+            let _ = image.set_pixel(center_x + x, center_y + y, color.clone());
+            let _ = image.set_pixel(center_x - x, center_y + y, color.clone());
+            let _ = image.set_pixel(center_x + x, center_y - y, color.clone());
+            let _ = image.set_pixel(center_x - x, center_y - y, color.clone());
+            let _ = image.set_pixel(center_x + y, center_y + x, color.clone());
+            let _ = image.set_pixel(center_x - y, center_y + x, color.clone());
+            let _ = image.set_pixel(center_x + y, center_y - x, color.clone());
+            let _ = image.set_pixel(center_x - y, center_y - x, color.clone());
+            x += 1;
+        }
     }
 }
