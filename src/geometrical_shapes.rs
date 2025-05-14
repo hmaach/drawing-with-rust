@@ -3,7 +3,7 @@ use raster::{Color, Image};
 use std::cmp::max;
 
 pub trait Drawable {
-    fn draw(&mut self, image: &mut Image);
+    fn draw(&self, image: &mut Image);
     fn color() -> Color {
         let r = rand::rng().random_range(0..255);
         let g = rand::rng().random_range(0..255);
@@ -32,7 +32,7 @@ impl Point {
 }
 
 impl Drawable for Point {
-    fn draw(&mut self, image: &mut Image) {
+    fn draw(&self, image: &mut Image) {
         image.display(self.0, self.1, Self::color());
     }
 }
@@ -62,7 +62,7 @@ impl Line {
 }
 
 impl Drawable for Line {
-    fn draw(&mut self, image: &mut Image) {
+    fn draw(&self, image: &mut Image) {
         // get a random color
         let color: Color = self.2.clone();
 
@@ -99,27 +99,12 @@ impl Triangle {
     pub fn new(p1: &Point, p2: &Point, p3: &Point) -> Self {
         Self(p1.clone(), p2.clone(), p3.clone())
     }
-    pub fn random(width: i32, height: i32) -> Self {
-        // point 1
-        let x1: i32 = rand::rng().random_range(0..width);
-        let y1: i32 = rand::rng().random_range(0..height);
-
-        // point 2
-        let x2: i32 = rand::rng().random_range(0..width);
-        let y2: i32 = rand::rng().random_range(0..height);
-
-        // point 3
-        let x3: i32 = rand::rng().random_range(0..width);
-        let y3: i32 = rand::rng().random_range(0..height);
-
-        Self(Point(x1, y1), Point(x2, y2), Point(x3, y3))
-    }
 }
 
 impl Drawable for Triangle {
-    fn draw(&mut self, image: &mut Image) {
+    fn draw(&self, image: &mut Image) {
         // get a random color
-        let color: Color = Self::color();
+        let color: Color = Color::rgb(255, 255, 255);
 
         let point_a = &self.0;
         let point_b = &self.1;
@@ -139,8 +124,27 @@ impl Rectangle {
     pub fn new(p1: &Point, p2: &Point) -> Self {
         Self(p1.clone(), p2.clone())
     }
-    pub fn random(x: i32, y: i32) -> i32 {
-        rand::rng().random_range(x..y)
+}
+
+impl Drawable for Rectangle {
+    fn draw(&self, image: &mut Image) {
+        // get a random color
+        let color: Color = Color::rgb(255, 255, 255);
+
+        let point_a = &Point(self.1.0, self.1.0);
+        let point_b = &Point(self.0.1, self.1.1);
+        let point_c = &Point(self.0.0, self.0.0);
+        let point_d = &Point(self.1.0, self.0.1);
+
+        Point::new(point_c.0, point_c.1).draw(image);
+        Point::new(point_b.0, point_b.1).draw(image);
+        Point::new(point_a.0, point_a.1).draw(image);
+        Point::new(point_d.0, point_d.1).draw(image);
+
+        Line::new(point_a, point_b, color.clone()).draw(image);
+        Line::new(point_b, point_c, color.clone()).draw(image);
+        Line::new(point_d, point_c, color.clone()).draw(image);
+        Line::new(point_a, point_d, color.clone()).draw(image);
     }
 }
 
@@ -156,12 +160,12 @@ impl Circle {
         let x = rand::rng().random_range(0..width);
         let y = rand::rng().random_range(0..height);
         let r = rand::rng().random_range(0..height);
-        Self(Point(x, y), r)
+        Self::new(&Point(x, y), r)
     }
 }
 
 impl Drawable for Circle {
-    fn draw(&mut self, image: &mut Image) {
+    fn draw(&self, image: &mut Image) {
         // get a random color
         let color: Color = Self::color();
 

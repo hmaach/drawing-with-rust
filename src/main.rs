@@ -7,53 +7,21 @@ use raster::{Color, Image};
 fn main() {
     let mut image = Image::blank(1000, 1000);
 
-    // let a = gs::Point::new(0, 0);
-    // let b = gs::Point::new(50, 0);
-    // let c = gs::Point::new(50, 50);
-    // a.draw(&mut image);
-    // b.draw(&mut image);
-    // c.draw(&mut image);
+    gs::Line::random(image.width, image.height).draw(&mut image);
 
-    // A) 50, 50
-    // B) 25, 70
-    // C) 70, 80
+    gs::Point::random(image.width, image.height).draw(&mut image);
 
-    // gs::Line::new(
-    //     &gs::Point::new(50, 50), //a
-    //     &gs::Point::new(25, 70), //b
-    //     Color::rgb(200, 200, 200),
-    // )
-    // .draw(&mut image);
+    let rectangle = gs::Rectangle::new(&gs::Point::new(150, 150), &gs::Point::new(50, 50));
+    rectangle.draw(&mut image);
 
-    // gs::Line::new(
-    //     &gs::Point::new(50, 50), //a
-    //     &gs::Point::new(70, 80), //c
-    //     Color::rgb(200, 200, 200),
-    // )
-    // .draw(&mut image);
-
-    // gs::Line::new(
-    //     &gs::Point::new(25, 70),  //c
-    //     &gs::Point::new(70, 80), //a
-    //     Color::rgb(200, 200, 200),
-    // )
-    // .draw(&mut image);
-
-    // gs::Line::random(image.width, image.height).draw(&mut image);
-
-    // gs::Point::random(image.width, image.height).draw(&mut image);
-
-    // let rectangle = gs::Rectangle::new(&gs::Point::new(150, 150), &gs::Point::new(50, 50));
-    // rectangle.draw(&mut image);
-
-    gs::Triangle::new(
+    let triangle = gs::Triangle::new(
         &gs::Point::new(500, 500),
         &gs::Point::new(250, 700),
         &gs::Point::new(700, 800),
-    )
-    .draw(&mut image);
+    );
+    triangle.draw(&mut image);
 
-    for _ in 1..2 {
+    for _ in 1..50 {
         gs::Circle::random(image.width, image.height).draw(&mut image);
     }
 
