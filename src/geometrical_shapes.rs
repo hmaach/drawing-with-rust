@@ -1,13 +1,12 @@
 use rand::Rng;
 use raster::{Color, Image};
-use std::cmp::max;
 
 pub trait Drawable {
     fn draw(&self, image: &mut Image);
     fn color() -> Color {
-        let r = rand::rng().random_range(0..255);
-        let g = rand::rng().random_range(0..255);
-        let b = rand::rng().random_range(0..255);
+        let r = rand::rng().random_range(1..255);
+        let g = rand::rng().random_range(1..255);
+        let b = rand::rng().random_range(1..255);
         Color::rgb(r, g, b)
     }
 }
@@ -75,7 +74,7 @@ impl Drawable for Line {
         let dis_x: i32 = end_x - start_x; // distance between the x of start & end points
         let dis_y: i32 = end_y - start_y; // distance between the y of start & end points
 
-        let steps = max(dis_x, dis_y);
+        let steps = i32::max(dis_x.abs(), dis_y.abs());
 
         let mut new_x: f32 = start_x as f32;
         let mut new_y: f32 = start_y as f32;
@@ -131,15 +130,13 @@ impl Drawable for Rectangle {
         // get a random color
         let color: Color = Self::color();
 
-        let point_a = &Point(self.1.0, self.1.0);
-        let point_b = &Point(self.0.1, self.1.1);
-        let point_c = &Point(self.0.0, self.0.0);
-        let point_d = &Point(self.1.0, self.0.1);
+        let point_1 = &self.0;
+        let point_2 = &self.1;
 
-        Point::new(point_c.0, point_c.1).draw(image);
-        Point::new(point_b.0, point_b.1).draw(image);
-        Point::new(point_a.0, point_a.1).draw(image);
-        Point::new(point_d.0, point_d.1).draw(image);
+        let point_a = &Point(point_2.0, point_2.1);
+        let point_b = &Point(point_1.0, point_2.1);
+        let point_c = &Point(point_1.0, point_1.1);
+        let point_d = &Point(point_2.0, point_1.1);
 
         Line::new(point_a, point_b, color.clone()).draw(image);
         Line::new(point_b, point_c, color.clone()).draw(image);
