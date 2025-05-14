@@ -39,13 +39,16 @@ impl Drawable for Point {
 
 // line struct
 #[derive(Debug, Clone)]
-pub struct Line(Point, Point);
+pub struct Line(Point, Point, Color);
 
 impl Line {
-    pub fn new(p1: &Point, p2: &Point) -> Self {
-        Self(p1.clone(), p2.clone())
+    pub fn new(p1: &Point, p2: &Point, color: Color) -> Self {
+        Self(p1.clone(), p2.clone(), color.clone())
     }
     pub fn random(width: i32, height: i32) -> Self {
+        // get a random color
+        let color: Color = Self::color();
+
         // point 1
         let x1: i32 = rand::rng().random_range(0..width);
         let y1: i32 = rand::rng().random_range(0..height);
@@ -54,14 +57,14 @@ impl Line {
         let x2: i32 = rand::rng().random_range(0..width);
         let y2: i32 = rand::rng().random_range(0..height);
 
-        Self(Point(x1, y1), Point(x2, y2))
+        Self(Point(x1, y1), Point(x2, y2), color)
     }
 }
 
 impl Drawable for Line {
     fn draw(&mut self, image: &mut Image) {
         // get a random color
-        let color: Color = Self::color();
+        let color: Color = self.2.clone();
 
         let start_x: i32 = self.0.0;
         let start_y: i32 = self.0.1;
@@ -69,22 +72,21 @@ impl Drawable for Line {
         let end_x: i32 = self.1.0;
         let end_y: i32 = self.1.1;
 
-        let dis_x: i32 = (start_x - end_x).abs(); // distance between the x of start & end points
-        let dis_y: i32 = (start_y - end_y).abs(); // distance between the y of start & end points
+        let dis_x: i32 = end_x - start_x; // distance between the x of start & end points
+        let dis_y: i32 = end_y - start_y; // distance between the y of start & end points
 
         let steps = max(dis_x, dis_y);
 
-        let mut new_x: i32 = start_x;
-        let mut new_y: i32 = start_y;
+        let mut new_x: f32 = start_x as f32;
+        let mut new_y: f32 = start_y as f32;
+
+        let x_inc = dis_x as f32 / steps as f32;
+        let y_inc = dis_y as f32 / steps as f32;
 
         for _ in 0..=steps {
-            image.display(new_x, new_y, color.clone());
-            dbg!(new_x);
-            dbg!(new_y);
-            dbg!(dis_x / steps);
-            new_x += (dis_x as f32 / steps as f32).round() as i32;
-            new_y += (dis_y as f32 / steps as f32).round() as i32;
-            new_y += dis_x / steps;
+            image.display(new_x.round() as i32, new_y.round() as i32, color.clone());
+            new_x += x_inc;
+            new_y += y_inc;
         }
     }
 }
@@ -111,6 +113,21 @@ impl Triangle {
         let y3: i32 = rand::rng().random_range(0..height);
 
         Self(Point(x1, y1), Point(x2, y2), Point(x3, y3))
+    }
+}
+
+impl Drawable for Triangle {
+    fn draw(&mut self, image: &mut Image) {
+        // get a random color
+        let color: Color = Self::color();
+
+        let point_a = &self.0;
+        let point_b = &self.1;
+        let point_c = &self.2;
+
+        Line::new(point_a, point_b, color.clone()).draw(image);
+        Line::new(point_b, point_c, color.clone()).draw(image);
+        Line::new(point_a, point_c, color.clone()).draw(image);
     }
 }
 
