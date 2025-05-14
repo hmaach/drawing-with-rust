@@ -1,5 +1,6 @@
 use rand::Rng;
 use raster::{Color, Image};
+use std::cmp::max;
 
 pub trait Drawable {
     fn draw(&mut self, image: &mut Image);
@@ -32,7 +33,7 @@ impl Point {
 
 impl Drawable for Point {
     fn draw(&mut self, image: &mut Image) {
-        let _ = image.set_pixel(self.0, self.1, Self::color());
+        image.display(self.0, self.1, Self::color());
     }
 }
 
@@ -46,12 +47,12 @@ impl Line {
     }
     pub fn random(width: i32, height: i32) -> Self {
         // point 1
-        let x1 = rand::rng().random_range(0..width);
-        let y1 = rand::rng().random_range(0..height);
+        let x1: i32 = rand::rng().random_range(0..width);
+        let y1: i32 = rand::rng().random_range(0..height);
 
-        // point 2
-        let x2 = rand::rng().random_range(0..width);
-        let y2 = rand::rng().random_range(0..height);
+        // poi:i32nt 2
+        let x2: i32 = rand::rng().random_range(0..width);
+        let y2: i32 = rand::rng().random_range(0..height);
 
         Self(Point(x1, y1), Point(x2, y2))
     }
@@ -59,10 +60,32 @@ impl Line {
 
 impl Drawable for Line {
     fn draw(&mut self, image: &mut Image) {
-        let point_1 = &self.0;
-        let point_2 = &self.0;
+        // get a random color
+        let color: Color = Self::color();
 
-        // let _ = image.set_pixel(point_1, self.1, Self::color());
+        let start_x: i32 = self.0.0;
+        let start_y: i32 = self.0.1;
+
+        let end_x: i32 = self.1.0;
+        let end_y: i32 = self.1.1;
+
+        let dis_x: i32 = (start_x - end_x).abs(); // distance between the x of start & end points
+        let dis_y: i32 = (start_y - end_y).abs(); // distance between the y of start & end points
+
+        let steps = max(dis_x, dis_y);
+
+        let mut new_x: i32 = start_x;
+        let mut new_y: i32 = start_y;
+
+        for _ in 0..=steps {
+            image.display(new_x, new_y, color.clone());
+            dbg!(new_x);
+            dbg!(new_y);
+            dbg!(dis_x / steps);
+            new_x += (dis_x as f32 / steps as f32).round() as i32;
+            new_y += (dis_y as f32 / steps as f32).round() as i32;
+            new_y += dis_x / steps;
+        }
     }
 }
 
@@ -122,12 +145,17 @@ impl Circle {
 
 impl Drawable for Circle {
     fn draw(&mut self, image: &mut Image) {
-        let color = Self::color();
-        let center_x = self.0.0;
-        let center_y = self.0.1;
-        let mut x = 0;
-        let mut y = -self.1; //negative raduis
-        let mut p = -self.1;
+        // get a random color
+        let color: Color = Self::color();
+
+        let center_x: i32 = self.0.0;
+        let center_y: i32 = self.0.1;
+        let raduis: i32 = self.1;
+
+        let mut x: i32 = 0;
+        let mut y: i32 = -raduis;
+        let mut p: i32 = -raduis;
+
         while x < (-y) {
             if p > 0 {
                 y += 1;
@@ -135,14 +163,16 @@ impl Drawable for Circle {
             } else {
                 p += 2 * x + 1;
             }
-            let _ = image.set_pixel(center_x + x, center_y + y, color.clone());
-            let _ = image.set_pixel(center_x - x, center_y + y, color.clone());
-            let _ = image.set_pixel(center_x + x, center_y - y, color.clone());
-            let _ = image.set_pixel(center_x - x, center_y - y, color.clone());
-            let _ = image.set_pixel(center_x + y, center_y + x, color.clone());
-            let _ = image.set_pixel(center_x - y, center_y + x, color.clone());
-            let _ = image.set_pixel(center_x + y, center_y - x, color.clone());
-            let _ = image.set_pixel(center_x - y, center_y - x, color.clone());
+
+            image.display(center_x + x, center_y + y, color.clone());
+            image.display(center_x - x, center_y + y, color.clone());
+            image.display(center_x + x, center_y - y, color.clone());
+            image.display(center_x - x, center_y - y, color.clone());
+            image.display(center_x + y, center_y + x, color.clone());
+            image.display(center_x - y, center_y + x, color.clone());
+            image.display(center_x + y, center_y - x, color.clone());
+            image.display(center_x - y, center_y - x, color.clone());
+
             x += 1;
         }
     }
